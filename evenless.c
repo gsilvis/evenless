@@ -11,8 +11,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the          *
  * GNU General Public License for more details.                           *
  *                                                                        *
- *  You should have received a copy of the GNU General Public License     *
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>. *
+ * You should have received a copy of the GNU General Public License      *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.  *
  **************************************************************************/
 
 
@@ -28,7 +28,7 @@
 /* returns a query that matches all messages in a thread. Free the query yourself. */
 notmuch_query_t*
 get_query_for_thread (notmuch_database_t* database,
-                        notmuch_thread_t* thread) {
+                      notmuch_thread_t* thread) {
   
   const char* threadid = notmuch_thread_get_thread_id(thread);
   const char* prefix = "thread:";
@@ -273,8 +273,9 @@ action_select_archive (notmuch_database_t* database,
 }
 
 /* Prompts user to select a thread, then removes the 'unread' tag from it */
-int action_select_read (notmuch_database_t* database,
-                        notmuch_query_t* query) {
+int
+action_select_read (notmuch_database_t* database,
+                    notmuch_query_t* query) {
   notmuch_threads_t* threads = notmuch_query_search_threads(query);
   notmuch_thread_t* thread = action_select_thread(database, threads);
 
