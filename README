@@ -1,0 +1,36 @@
+The backstory is as follows: First there was sup.  sup is a thread-based email
+indexer and client.  It's very fast (which I like), but it's written in Ruby
+(which I don't).  So, in response to this came notmuch.  notmuch imitates the
+back-end part of sup, but makes no effort to provide a front-end.  I want to
+fill that place.
+
+But, I don't want to read the many RFCs about email and MIME and such.  I want
+this front-end to be PGP capable, but I don't to figure out how to do that.
+Thankfully, there's a program that already does all of these things, and it is
+mutt.
+
+The concept of evenless, then, is that evenless provides a very slim front-end
+to notmuch: You can search for threads, and do tagging operations on them.
+But, if you want to do anything involving individual messages (like composing
+or reading them), evenless hands that job off to mutt.
+
+notmuch, to be sure, doesn't do much, given that xapian and offlineimap handle
+most of what it does.  But I'm pretty sure this program does even less than
+that. And thus was born 'evenless.'
+
+-------------------
+
+This is the very first release of evenless. So, you're on your own.  All I can
+advise you is this: compile with
+
+ gcc -o evenless evenless.c -lnotmuch
+
+You'll need the 'notmuch' program, and libnotmuch (along with its header
+files).  You'll also need mutt, and a way to send email from mutt.  I
+recommend msmtp, but some people have had problems with it working with badly
+written SMTP servers.  For notmuch to work, you'll need offlineimap.  The
+configuration will be spread all over the place.
+
+Have fun!
+
+-George Silvis, III
