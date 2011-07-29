@@ -20,16 +20,16 @@ that. And thus was born 'evenless.'
 
 -------------------
 
-This is the very first release of evenless. So, you're on your own.  All I can
+This is a very early release of evenless. So, you're on your own.  All I can
 advise you is this: compile with
 
  gcc -o evenless evenless.c -lnotmuch
 
 You'll need the 'notmuch' program, and libnotmuch (along with its header
 files).  You'll also need mutt, and a way to send email from mutt.  I
-recommend msmtp, but some people have had problems with it working with badly
-written SMTP servers.  For notmuch to work, you'll need offlineimap.  The
-configuration will be spread all over the place.
+recommend msmtp, but some people have had problems with it working with
+less-than-RFC-compliant SMTP servers.  For notmuch to work, you'll need
+offlineimap.  The configuration will be spread all over the place.
 
 Have fun!
 

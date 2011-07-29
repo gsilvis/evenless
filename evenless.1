@@ -1,0 +1,81 @@
+.TH EVENLESS 1 evenless\-0.0.2
+.SH NAME
+evenless \- front-end to the notmuch mail indexer
+.SH SYNOPSIS
+.B evenless
+[\fIOPTIONS\fR]
+.SH DESCRIPTION
+.BR evenless
+is a minimalistic frontend to the
+.BR notmuch(1)
+mail-indexing system. It lets you search for, tag, and untag threads. For all
+actions involving individual messages (composing and reading), it invokes
+.BR mutt(1)
+with the appropriate arguments.
+.SH OPTIONS
+.TP
+.B [\-c/\-\-config] /path/to/config
+Uses /path/to/config as the configuration file rather than the default
+~/.evenless/evenless.conf
+.TP
+.B [\-d/\-\-database] /path/to/notmuch/database
+Uses /path/to/notmuch/database as the database file, rather than reading a
+config file to find it.
+.TP
+.B [\-s/\-\-search] query
+Uses query as the search term rather than the default "tag:inbox". See
+.BR notmuch(1)
+for more details.
+.TP
+.B \-\-version
+Prints the version and copyright, and then exits.
+.SH USAGE
+.TP
+.B c/m
+Compose a new message
+.TP
+.B q/x
+Exit immediately.
+.TP
+.B t
+Select a thread, then add a tag to it
+.TP
+.B T
+Select a thread, then remove a tag from it
+.TP
+.B a
+Select a thread, then remove the "inbox" tag from it
+.TP
+.B r
+Select a thread, then remove the "unread" tag from it
+.TP
+.B A
+Select a thread, then remove both the "inbox" and "unread" tags from it
+.TP
+.B v/Enter
+Select a thread, then view the entire thread in
+.BR mutt(1)
+.SH FILES
+.TP
+.B ~/.evenless/evenless.conf
+This is the default configuration file for evenless, though it can be
+overrided with the [-c/--config] option. As of right now this file has very
+simple syntax: Lines beginning with '#' are comments. There must be exactly
+one non-commented line, which specifies the full path to a notmuch database.
+.SH SEE ALSO
+.BR notmuch(1)
+.BR mutt(1)
+.BR offlineimap(1)
+.BR msmtp(1)
+.SH LIMITATIONS
+.BR evenless
+does not have the capability of changing the tags of an individual message.
+.BR evenless
+also does not currently handle or even think about syncing notmuch tags to
+Maildir flags. This will be fixed later.
+.SH AUTHOR
+Copyright (C) 2011 George Silvis, III.
+.PP
+Permission is granted to copy, distribute and/or modify this document under
+the terms of the GNU General Public License, Version 3 or any later version
+published by the Free Software Foundation.

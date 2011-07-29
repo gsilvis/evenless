@@ -1,0 +1,17 @@
+evenless-0.0.2
+        Distribution changes:
+          Added a header file evenless.h
+          Added a man page evenless.1
+          Added a disclaimer to the --version output
+        New features:          
+          Added '-d/--database' command-line option
+          Added 'A' key to remove both 'inbox' and 'unread' tags
+          Threads with unread messages are printed in BOLD
+        Bug fixes:
+          Fixed bug where selecting threads would sometimes fail [not fully understood yet]
+          String input now strips trailing newline, fixing a bug where tagging would seem to fail
+        New limitations realized:
+          Syncing tags to maildir flags is not handled in any way currently.
+
+evenless-0.0.1
+        First release.

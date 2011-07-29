@@ -1,26 +1,27 @@
 /* Copyright (C) 2010 George Silvis, III */
 
-/**************************************************************************
- * This program is free software: you can redistribute it and/or modify   *
- * it under the terms of the GNU General Public License as published by   *
- * the Free Software Foundation, either version 3 of the License, or      *
- * (at your option) any later version.                                    *
- *                                                                        *
- * This program is distributed in the hope that it will be useful,        *
- * but WITHOUT ANY WARRANTY; without even the implied warranty of         *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the          *
- * GNU General Public License for more details.                           *
- *                                                                        *
- * You should have received a copy of the GNU General Public License      *
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.  *
- **************************************************************************/
+/*
+This file is part of evenless.
 
+evenless is free software: you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+evenless is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+evenless.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
 
 #include <notmuch.h>
 
+#include "evenless.h"
 
 /* Throughout this file, if not mentioned otherwise, any function that returns an int
  * returns 0 if successful, and 1 if unsuccessful */
@@ -56,7 +57,23 @@ tag_entire_thread (notmuch_database_t* database,
     if (message==NULL) {
       return 1; /* out of memory */
     }
-    notmuch_message_add_tag(message, tag);
+    switch (notmuch_message_add_tag(message, tag)) {
+    case NOTMUCH_STATUS_SUCCESS:
+      printf("Tagging succeeded.\n");
+      break;
+    case NOTMUCH_STATUS_NULL_POINTER:
+      printf("Bad tag pointer.\n");
+      break;
+    case NOTMUCH_STATUS_TAG_TOO_LONG:
+      printf("Very long tag name.\n");
+      break;
+    case NOTMUCH_STATUS_READ_ONLY_DATABASE:
+      printf("Database read only.\n");
+      break;
+    default:
+      printf("What the fuck, notmuch.\n");
+      break;
+    }
     notmuch_message_destroy(message);
   }
   notmuch_messages_destroy(messages);
@@ -101,6 +118,8 @@ get_string_input (const char* prompt) {
     printf("Error (getline failed)\n");
     return NULL;
   }
+
+  input_string[strlen(input_string)-1]='\0'; /* strip trailing newline */
 
   return input_string;
 }
@@ -173,15 +192,19 @@ notmuch_thread_t*
 action_select_thread (notmuch_database_t* database,
                       notmuch_threads_t* threads) {
   int number = get_int_input("Please select a thread.");
-  
+ 
+  if (number < 1) {
+    printf("Invalid number.\n");
+    return NULL;
+  }
+ 
   int i;
-  for (i = 1;
-       i < number && notmuch_threads_valid(threads);
-       i++) {
+  for (i = 1; i < number; i++) {
+    notmuch_threads_get(threads); /* return value freed as soon as 'threads' freed */
     notmuch_threads_move_to_next(threads);
   }
   if (!notmuch_threads_valid(threads)) {
-    printf("Invalid number");
+    printf("Invalid number.\n");
     return NULL;
   }
   return notmuch_threads_get(threads);
@@ -194,8 +217,9 @@ action_select_tag (notmuch_database_t* database,
                    notmuch_query_t* query) {
   notmuch_threads_t* threads = notmuch_query_search_threads(query);
   notmuch_thread_t* thread = action_select_thread(database, threads);
+
   if (thread==NULL) {
-    return -1;
+    return 1;
   }
 
   int returnee = action_tag_thread(database, thread);
@@ -211,8 +235,9 @@ action_select_untag (notmuch_database_t* database,
                      notmuch_query_t* query) {
   notmuch_threads_t* threads = notmuch_query_search_threads(query);
   notmuch_thread_t* thread = action_select_thread(database, threads);
+
   if (thread==NULL) {
-    return -1;
+    return 1;
   }
 
   int returnee = action_untag_thread(database, thread);
@@ -252,11 +277,17 @@ action_select_view (notmuch_database_t* database,
   notmuch_threads_t* threads = notmuch_query_search_threads(query);
   notmuch_thread_t* thread = action_select_thread(database, threads);
 
+  if (thread==NULL) {
+    return 1;
+  }
+
   action_read(database, thread);
   action_view(thread);
 
   notmuch_thread_destroy(thread);
   notmuch_threads_destroy(threads);
+
+  return 0;
 }
 
 /* Prompts user to select a thread, then removes the 'inbox' tag from it */
@@ -266,10 +297,16 @@ action_select_archive (notmuch_database_t* database,
   notmuch_threads_t* threads = notmuch_query_search_threads(query);
   notmuch_thread_t* thread = action_select_thread(database, threads);
 
+  if (thread==NULL) {
+    return 1;
+  }
+
   action_archive(database, thread);
 
   notmuch_thread_destroy(thread);
   notmuch_threads_destroy(threads);
+
+  return 0;
 }
 
 /* Prompts user to select a thread, then removes the 'unread' tag from it */
@@ -279,10 +316,35 @@ action_select_read (notmuch_database_t* database,
   notmuch_threads_t* threads = notmuch_query_search_threads(query);
   notmuch_thread_t* thread = action_select_thread(database, threads);
 
+  if (thread==NULL) {
+    return 1;
+  }
+
   action_read(database, thread);
 
   notmuch_thread_destroy(thread);
   notmuch_threads_destroy(threads);
+
+  return 0;
+}
+
+int
+action_select_read_archive (notmuch_database_t* database,
+                            notmuch_query_t* query) {
+  notmuch_threads_t* threads = notmuch_query_search_threads(query);
+  notmuch_thread_t* thread = action_select_thread(database, threads);
+
+  if (thread==NULL) {
+    return 1;
+  }
+
+  action_read(database, thread);
+  action_archive(database, thread);
+
+  notmuch_thread_destroy(thread);
+  notmuch_threads_destroy(threads);
+
+  return 0;
 }
 
 /* Prints out the results of a query, returns the number of threads. */
@@ -295,10 +357,31 @@ printquery (notmuch_database_t* database,
        notmuch_threads_valid(threads);
        notmuch_threads_move_to_next(threads), i++) {
     notmuch_thread_t* thread = notmuch_threads_get(threads);
+
+    notmuch_tags_t* tags;
+    int unread = FALSE;
+    for (tags = notmuch_thread_get_tags(thread);
+         notmuch_tags_valid(tags);
+         notmuch_tags_move_to_next(tags)) {
+      const char* tag = notmuch_tags_get(tags);
+      if (!strcmp(tag, "unread")) {
+        unread = TRUE;
+        break;
+      }
+    }
+    notmuch_tags_destroy(tags);
+
+    int style;
+    if (unread) {
+      style = 1;
+    } else {
+      style = 0;
+    }
+
     int total_messages = notmuch_thread_get_total_messages(thread);
     const char* authors = notmuch_thread_get_authors(thread);
     const char* subject = notmuch_thread_get_subject(thread);
-    printf("%i: %i messages. %s.  %s\n", i+1, total_messages, subject, authors);
+    printf("\e[%im%i: %i messages. %s.  %s\e[m\n", style, i+1, total_messages, subject, authors);
     notmuch_thread_destroy(thread);
   }
   notmuch_threads_destroy(threads);
@@ -342,6 +425,9 @@ runquery (notmuch_database_t* database,
     case 'r': /* mark a thread as read */
       action_select_read(database, query);
       break;
+    case 'A': /* marh a thread as read and archive it */
+      action_select_read_archive(database, query);
+      break;
     case 'v': case '\n': /* select and _v_iew a thread */
       action_select_view(database, query);
       break;
@@ -368,8 +454,11 @@ main (int argc,
   int i;
   for (i = 1; i < argc; i++) {
     if (!strcmp(argv[i], "--version")) {
-      printf("evenless 0.0.1\n");
+      printf("evenless 0.0.2\n");
       printf("Copyright (C) 2011 George Silvis, III\n");
+      printf("This is free software; see the source for copying conditions.  There is NO\n");
+      printf("warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n");
+
       exit(0);
     } else if (!strcmp(argv[i], "-s") || !strcmp(argv[i], "--search")) {
       if (i+1==argc) {
@@ -383,6 +472,12 @@ main (int argc,
         exit(1);
       }
       config_path = argv[++i];
+    } else if (!strcmp(argv[i], "-d") || !strcmp(argv[i], "--database")) {
+      if (i+1==argc) {
+        printf("Bad arguments. %s expects a path to a notmuch database.\n", argv[i]);
+        exit(1);
+      }
+      notmuch_database_path = argv[++i];
     } else {
       printf("Bad arguments. (unrecognized argument)\n");
       exit(1);
@@ -390,45 +485,58 @@ main (int argc,
   }
 
 
-  /* parse configuration file */
-  int need_free_config_path = FALSE;
+  if (notmuch_database_path==NULL) {
+    
+    /* parse configuration file */
+    int need_free_config_path = FALSE;
 
-  if (config_path==NULL) {
-    char* home_dir = getenv("HOME");
-    if (home_dir==NULL) {
-      printf("Home environment variable not set. Giving up.\n");
-      printf("Either set HOME, or explicitly pass '--config /full/path/to/config'\n");
+    if (config_path==NULL) {
+      char* home_dir = getenv("HOME");
+      if (home_dir==NULL) {
+        printf("Home environment variable not set, and config not explicitly given. Giving up.\n");
+        printf("Either set HOME, or explicitly pass '--config /full/path/to/config'\n");
+        exit(1);
+      }
+      char* ending = ".evenless/evenless.conf";
+      
+      config_path = malloc(snprintf(NULL, 0, "%s/%s", home_dir, ending) + 1);
+      sprintf(config_path, "%s/%s", home_dir, ending);
+      
+      need_free_config_path = TRUE;
+    }
+    
+    FILE* config_file = fopen(config_path, "r");
+    if (config_file==NULL) {
+      printf("Failed to open config file.\n");
       exit(1);
     }
-    char* ending = ".evenless/evenless.conf";
+    int line_buffer_length = 5;
+    char* line_buffer = (char*) malloc(line_buffer_length+1);
+    while (getline(&line_buffer, &line_buffer_length, config_file) != -1) {
+      if (line_buffer[0]=='#' ||
+          line_buffer[0]==' ' ||
+          line_buffer[0]=='\n' ||
+          line_buffer[0]=='\t') {
+        continue;
+      }
+      line_buffer[strlen(line_buffer)-1] = '\0'; /* strip trailing newline */
+      
+      notmuch_database_path = malloc(snprintf(NULL, 0, "%s", line_buffer) + 1);
+      sprintf(notmuch_database_path, "%s", line_buffer);
 
-    config_path = malloc(snprintf(NULL, 0, "%s/%s", home_dir, ending) + 2);
-    sprintf(config_path, "%s/%s", home_dir, ending);
-
-    need_free_config_path = TRUE;
-  }
-
-  FILE* config_file = fopen(config_path, "r");
-  if (config_file==NULL) {
-    printf("Failed to open config file.\n");
-    exit(1);
-  }
-  int line_buffer_length = 5;
-  char* line_buffer = (char*) malloc(line_buffer_length+1);
-  while (getline(&line_buffer, &line_buffer_length, config_file) != -1) {
-    if (line_buffer[0]=='#' || line_buffer[0]==' ' || line_buffer[0]=='\n' || line_buffer[0]=='\t') {
-      continue;
     }
-    line_buffer[strlen(line_buffer)-1] = '\0'; /* strip trailing newline */
-
-    notmuch_database_path = malloc(snprintf(NULL, 0, "%s", line_buffer) + 1);
-
-    sprintf(notmuch_database_path, "%s", line_buffer);
-
+    fclose(config_file);
+    if (need_free_config_path) {
+      free(config_path);
+    }
+  } else {
+    printf("Database specified via command line. Ignoring any config file.\n");
   }
-  fclose(config_file);
-  if (need_free_config_path) {
-    free(config_path);
+
+  if(notmuch_database_path==NULL) {
+    printf("No database specified, either in a flag or in the config file.\n");
+    printf("Giving up.\n");
+    exit(1);
   }
 
   /* open database */
