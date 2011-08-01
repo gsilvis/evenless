@@ -1,0 +1,1 @@
+/usr/bin/gcc  -Wall    CMakeFiles/evenless.dir/evenless.c.o  -o evenless -rdynamic -lnotmuch 

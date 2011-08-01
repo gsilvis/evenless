@@ -18,13 +18,14 @@ evenless.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <string.h>
 #include <notmuch.h>
 
 #include "evenless.h"
 
 /* Throughout this file, if not mentioned otherwise, any function that returns an int
- * returns 0 if successful, and 1 if unsuccessful */
+ * returns 0 if successful, and 1 if unsuccessful
+ */
 
 /* returns a query that matches all messages in a thread. Free the query yourself. */
 notmuch_query_t*
@@ -110,7 +111,7 @@ untag_entire_thread (notmuch_database_t* database,
  * It should not end with a newline. */
 char*
 get_string_input (const char* prompt) {
-  int input_string_length = 15;
+  unsigned int input_string_length = 15;
   char* input_string = (char*) malloc(input_string_length+1);
 
   printf("%s\n", prompt);
@@ -127,7 +128,7 @@ get_string_input (const char* prompt) {
 /* Asks the user to input an integer. 'prompt' is how you want to prompt the user. */
 int
 get_int_input (const char* prompt) {
-  int input_number_length = 3;
+  unsigned int input_number_length = 3;
   char* input_number = (char*) malloc(input_number_length+1);
 
   printf("%s\n", prompt);
@@ -394,7 +395,7 @@ runquery (notmuch_database_t* database,
           char* string) {
   notmuch_query_t* query = notmuch_query_create(database, string);
 
-  int command_length = 1;
+  unsigned int command_length = 1;
   char* command = (char*) malloc(command_length+1);
 
   while (1) {
@@ -510,7 +511,7 @@ main (int argc,
       printf("Failed to open config file.\n");
       exit(1);
     }
-    int line_buffer_length = 5;
+    unsigned int line_buffer_length = 5;
     char* line_buffer = (char*) malloc(line_buffer_length+1);
     while (getline(&line_buffer, &line_buffer_length, config_file) != -1) {
       if (line_buffer[0]=='#' ||

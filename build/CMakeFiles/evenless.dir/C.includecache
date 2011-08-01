@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/mixal/Git/evenless/evenless.c
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+notmuch.h
+-
+evenless.h
+/home/mixal/Git/evenless/evenless.h
+
+/home/mixal/Git/evenless/evenless.h
+notmuch.h
+-
+
