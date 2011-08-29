@@ -1,4 +1,4 @@
-/* Copyright (C) 2010 George Silvis, III */
+/* Copyright (C) 2011 George Silvis, III <george.iii.silvis@gmail.com> */
 
 /*
 This file is part of evenless.
@@ -455,7 +455,7 @@ main (int argc,
   int i;
   for (i = 1; i < argc; i++) {
     if (!strcmp(argv[i], "--version")) {
-      printf("evenless 0.0.2\n");
+      printf("evenless 0.0.3\n");
       printf("Copyright (C) 2011 George Silvis, III\n");
       printf("This is free software; see the source for copying conditions.  There is NO\n");
       printf("warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n");

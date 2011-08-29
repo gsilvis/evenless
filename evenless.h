@@ -1,4 +1,4 @@
-/* Copyright (C) 2010 George Silvis, III */
+/* Copyright (C) 2011 George Silvis, III <george.iii.silvis@gmail.com> */
 
 /*
 This file is part of evenless.

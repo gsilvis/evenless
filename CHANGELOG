@@ -1,8 +1,10 @@
 evenless-0.0.3
 	Distribution changes:
-	  Migrated to cmake
+	  Migrated to cmake (build systems, woo!)
+          Added copyright notices to evenless.1 and CMakeLists.txt (Thank you, Liam!)
 	Bug fixes:
 	  Compiles w/out warnings
+          Realized that it's not 2010 anymore, and that these files should probably say copyright 2011
 
 evenless-0.0.2
         Distribution changes:
