@@ -22,10 +22,11 @@ cmake_minimum_required(VERSION 2.6)
 #project name
 project(evenless)
 
-set(CMAKE_C_FLAGS -Wall)
+set(CMAKE_C_FLAGS -g)
+
 set(CMAKE_MAJOR_VERSION 0)
 set(CMAKE_MINOR_VERSION 0)
-set(CMAKE_PATCH_VERSION 3)
+set(CMAKE_PATCH_VERSION 4-rc1)
 
 
 add_executable(evenless evenless.c)

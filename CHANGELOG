@@ -1,3 +1,7 @@
+evenless-0.0.4-rc1
+        Complete re-structuring of code, allowing many planned features.
+        I love realloc.
+
 evenless-0.0.3
 	Distribution changes:
 	  Migrated to cmake (build systems, woo!)
