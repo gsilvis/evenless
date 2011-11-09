@@ -1,9 +1,10 @@
-evenless-0.0.4-rc2
+evenless-0.0.5
         Bug fixes:
           Viewing a thread marks it as read.
         Switched from cmake to autotools. (Got fed up with cmake.)
+          install and uninstall targets should both work, among many more.
         Added 'u/f' command: run offlineimap and notmuch new.
-        Todo: clean up config format, allow generalization of some commands.
+        ncurses support in a usable state.
 
 evenless-0.0.4-rc1
         Complete re-structuring of code, allowing many planned features.

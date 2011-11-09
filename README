@@ -20,22 +20,13 @@ that. And thus was born 'evenless.'
 
 -------------------
 
-We now have a man page, and a build system courtesy of Liam Wang.  You'll need
-to have cmake installed.  I recommend the following commands:
+Autotools should be functional, so ./configure; make; make install.  For
+compilation you'll need 'libnotmuch' and 'libncurses'.
 
- mkdir build
- cd build
- cmake ..
- make
-
-There is currently *not* a working install target, so you'll have to do that
-yourself.
-
-You'll need the 'notmuch' program, and libnotmuch (along with its header
-files).  You'll also need mutt, and a way to send email from mutt.  I
-recommend msmtp, but some people have had problems with it working with
-less-than-RFC-compliant SMTP servers.  For notmuch to work, you'll need
-offlineimap.  The configuration will be spread all over the place.
+You'll need the 'notmuch' program.  You'll also need mutt, and a way to send
+email from mutt.  I recommend msmtp, but some people have had problems with it
+working with less-than-RFC-compliant SMTP servers.  For notmuch to work,
+you'll need offlineimap.  The configuration will be spread all over the place.
 
 Have fun!
 
