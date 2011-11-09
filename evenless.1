@@ -15,7 +15,7 @@
 \" evenless.  If not, see <http://www.gnu.org/licenses/>.
 
 
-.TH EVENLESS 1 evenless\-0.0.4-rc1
+.TH EVENLESS 1 evenless\-0.0.5
 .SH NAME
 evenless \- front-end to the notmuch mail indexer
 .SH SYNOPSIS
@@ -54,6 +54,9 @@ Compose a new message
 .B q/x
 Exit immediately.
 .TP
+.B u/f
+Fetch new messages. 
+.TP
 .B t
 Select a thread, then add a tag to it
 .TP
@@ -90,6 +93,9 @@ does not have the capability of changing the tags of an individual message.
 .BR evenless
 also does not currently handle or even think about syncing notmuch tags to
 Maildir flags. This will be fixed later.
+.br evenless
+currently acts on the actively loaded database.  Instead, a buffer should be
+used, and updates flushed to the database later.
 .SH AUTHOR
 Copyright (C) 2011 George Silvis, III.
 .PP

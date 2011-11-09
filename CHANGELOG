@@ -1,3 +1,10 @@
+evenless-0.0.4-rc2
+        Bug fixes:
+          Viewing a thread marks it as read.
+        Switched from cmake to autotools. (Got fed up with cmake.)
+        Added 'u/f' command: run offlineimap and notmuch new.
+        Todo: clean up config format, allow generalization of some commands.
+
 evenless-0.0.4-rc1
         Complete re-structuring of code, allowing many planned features.
         I love realloc.
